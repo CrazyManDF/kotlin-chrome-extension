@@ -34,8 +34,8 @@ private fun sendMessage(onResponse: (Message) -> Unit) {
     chrome.runtime.sendMessage(
         message = Json.encodeToString(message),
         responseCallback = { response ->
-            val message = Json.decodeFromString<Message>(response.toString())
-            onResponse(message)
+            val responseMessage = Json.decodeFromString<Message>(response.toString())
+            onResponse(responseMessage) // Message from background to popup
         }
     )
 }
