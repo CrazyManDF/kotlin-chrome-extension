@@ -6,14 +6,16 @@ import androidx.compose.runtime.setValue
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
 import com.example.template.data.Message
+import org.jetbrains.compose.web.dom.*
 
 fun main() {
     renderComposable("root") {
         var result by remember { mutableStateOf("") }
+        H3 {
+            Text("Hello Extensions")
+        }
         Button({
             onClick {
                 sendMessage {
