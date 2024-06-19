@@ -1,6 +1,9 @@
 import chrome.action.BadgeTextDetails
+import chrome.action.setBadgeText
 import chrome.browserAction.TabDetails
 import chrome.runtime.InstalledDetails
+import chrome.scripting.CSSInjection
+import chrome.scripting.InjectionTarget
 import chrome.tabs.Tab
 import com.example.template.data.Message
 import kotlinx.serialization.decodeFromString
@@ -16,32 +19,63 @@ const val webstore = "https://developer.chrome.com/docs/webstore"
 fun main() {
     println("Background script initialized")
 
+    setBadgeInfo()
+
+    sendResponseMessage()
+
+}
+
+fun setBadgeInfo() {
     chrome.runtime.onInstalled.addListener<InstalledDetails> {
         val textDetails = BadgeTextDetails  {
             text = "OFF"
         }
-        chrome.action.setBadgeText(textDetails)
+        setBadgeText(textDetails)
     }
-
     chrome.action.onClicked.addListener<Tab> { tab ->
-        println("====onClicked")
+        // 用这个网址测试 https://developer.chrome.com/docs/webstore/publish
+
         if (tab.url?.startsWith(extensions) == true ||
             tab.url?.startsWith(webstore) == true){
-            val nextState = chrome.action.getBadgeText((js("{}") as TabDetails).apply {
+            // 更改标签
+            chrome.action.getBadgeText((js("{}") as TabDetails).apply {
                 tabId = tab.id
             }).then {
-                println("====onClicked==$it")
                 if( it == "ON") "OFF" else "ON"
             }.then {
                 val textDetails = BadgeTextDetails {
                     tabId = tab.id
                     text = it
                 }
-                chrome.action.setBadgeText(textDetails)
+                setBadgeText(textDetails)
+
+                // 添加或移除样式表
+                when (it) {
+                    "ON" -> {
+                        chrome.scripting.insertCSS((js("{}") as CSSInjection).apply {
+                            files = arrayOf("focus-mode.css")
+                            target = (js("{}") as InjectionTarget).apply { tabId = tab.id }
+                        }, {})
+                    }
+                    "OFF" -> {
+                        chrome.scripting.removeCSS((js("{}") as CSSInjection).apply {
+                            files = arrayOf("focus-mode.css")
+                            target = (js("{}") as InjectionTarget).apply { tabId = tab.id }
+                        }, {})
+                    }
+                    else -> {
+
+                    }
+                }
             }
         }
     }
+}
 
+/**
+ * 返回消息
+ */
+fun sendResponseMessage() {
     chrome.runtime.onMessage.addListener { request, sender, sendResponse ->
         println("Background receives a message: ${request}")
         val message = Json.decodeFromString<Message>(request.toString())
