@@ -33,3 +33,24 @@ external interface MessageSender{
     var tlsChannelId: String?
     var url: String?
 }
+
+external interface InstalledDetails {
+    var reason: String
+    var previousVersion: String? get() = definedExternally; set(value) = definedExternally
+    var id: String? get() = definedExternally; set(value) = definedExternally
+}
+
+external interface MessageOptions {
+    var includeTlsChannelId: Boolean? get() = definedExternally; set(value) = definedExternally
+}
+
+
+external interface ExtensionMessageEvent : chrome.events.Event2<(message: Any, sender: MessageSender, sendResponse: (response: Any) -> Unit) -> Unit>
+
+external fun sendMessage(message: Any, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
+external fun sendMessage(message: Any, options: MessageOptions, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
+external fun sendMessage(extensionId: String, message: Any, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
+external fun sendMessage(extensionId: String, message: Any, options: MessageOptions, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
+
+external var onMessage: ExtensionMessageEvent = definedExternally
+external var onInstalled: Event<InstalledDetails>

@@ -6,6 +6,7 @@
   "version": "0.1.0",
 
   "action": {
+    "default_title": "Click to show an alert",
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
@@ -32,6 +33,7 @@
   },
 
   "permissions": [
-    "background"
+    "background",
+    "activeTab"
   ]
 }

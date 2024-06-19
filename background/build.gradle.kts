@@ -4,7 +4,8 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib-js"))
-    implementation(project(":chrome"))
+    implementation(project(":chromeextapimappings"))
+//    implementation(project(":chrome"))
     implementation(project(":data"))
     implementation(Deps.Kotlin.serialization)
 }

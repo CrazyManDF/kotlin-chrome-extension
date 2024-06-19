@@ -6,7 +6,8 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib-js"))
-    implementation(project(":chrome"))
+//    implementation(project(":chrome"))
+    implementation(project(":chromeextapimappings"))
     implementation(project(":data"))
     implementation(compose.html.core)
     implementation(compose.runtime)
