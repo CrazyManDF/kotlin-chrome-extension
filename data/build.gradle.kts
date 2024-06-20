@@ -10,15 +10,8 @@ kotlin {
     }
 
     sourceSets {
-        named("commonMain") {
-            dependencies {
-                implementation(Deps.Kotlin.serialization)
-            }
-        }
-        named("jsMain") {
-            dependencies {
-                implementation(kotlin("stdlib-js"))
-            }
+        commonMain.dependencies {
+            implementation(Deps.Kotlin.serialization)
         }
     }
 }

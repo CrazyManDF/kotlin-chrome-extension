@@ -1,16 +1,19 @@
 plugins {
-    kotlin("js")
-}
-
-dependencies {
-    implementation(Deps.Kotlin.Coroutines.core)
-    implementation(Deps.Kotlin.Coroutines.core_js)
+    kotlin("multiplatform")
 }
 
 kotlin {
     js(IR) {
         binaries.executable()
         browser {}
+    }
+    sourceSets {
+        val jsMain by getting {
+            dependencies {
+                implementation(Deps.Kotlin.Coroutines.core)
+                implementation(Deps.Kotlin.Coroutines.core_js)
+            }
+        }
     }
 }
 

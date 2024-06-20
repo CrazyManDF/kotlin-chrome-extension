@@ -1,26 +1,33 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.template"
 version = "0.1.0"
 
-dependencies {
-    implementation(project(":background"))
-    implementation(project(":content"))
-    implementation(project(":popup"))
-}
-
 kotlin {
-    js(IR)
+    js(IR){
+        binaries.executable()
+        browser {}
+    }
+    sourceSets {
+        val jsMain by getting {
+            dependencies {
+                implementation(project(":background"))
+                implementation(project(":content"))
+                implementation(project(":popup"))
+            }
+        }
+    }
 }
 
 tasks {
     // Copy js scripts
-    val background = ":background:browserDistribution"
-    val content = ":content:browserDistribution"
-    val popup = ":popup:browserDistribution"
+    val background = ":background:jsBrowserDistribution"
+    val content = ":content:jsBrowserDistribution"
+    val popup = ":popup:jsBrowserDistribution"
     val extensionFolder = "$projectDir/build/extension"
+
     val copyBundleFile = register<Copy>("copyBundleFile") {
         dependsOn(background, content, popup)
         from(
@@ -33,7 +40,7 @@ tasks {
 
     // Copy resources
     val copyResources = register<Copy>("copyResources") {
-        val resourceFolder = "src/main/resources"
+        val resourceFolder = "src/jsMain/resources"
         from(
             "$resourceFolder/manifest.json",
             "$resourceFolder/icons",
