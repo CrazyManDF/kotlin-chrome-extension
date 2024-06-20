@@ -15,7 +15,6 @@ external interface DefaultSuggestResult {
     var description: String
 }
 
-
 external interface InputChangedEvent : Event2<(text: String, suggest: (suggestResults: Array<SuggestResult>)->Unit)  -> Unit>
 external interface InputEntered : Event2<(text: String, disposition: OnInputEnteredDisposition) -> Unit>
 

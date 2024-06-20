@@ -1,20 +1,15 @@
-import chrome.action.BadgeTextDetails
 import chrome.action.setBadgeText
-import chrome.browserAction.TabDetails
-import chrome.omnibox.DefaultSuggestResult
-import chrome.omnibox.SuggestResult
+import chrome.others.*
 import chrome.runtime.InstalledDetails
-import chrome.scripting.CSSInjection
-import chrome.scripting.InjectionTarget
-import chrome.tabs.CreateProperties
+import chrome.storage.get
+import chrome.storage.set
 import chrome.tabs.Tab
 import com.example.template.data.Message
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
-inline fun BadgeTextDetails(block: BadgeTextDetails.() -> Unit) =
-    (js("{}") as BadgeTextDetails).apply(block)
 
 const val extensions = "https://developer.chrome.com/docs/extensions"
 const val webstore = "https://developer.chrome.com/docs/webstore"
@@ -33,14 +28,14 @@ fun main() {
 
 fun displaySuggestions() {
     chrome.omnibox.onInputChanged.addListener { text, suggest ->
-        chrome.omnibox.setDefaultSuggestion((js("{}") as DefaultSuggestResult).apply {
+        chrome.omnibox.setDefaultSuggestion(DefaultSuggestResult{
             description = "Enter a Chrome API or choose from past searches"
         }, {})
 
-        chrome.storage.local.get("apiSuggestions"){ apiSuggestions ->
-            val array = apiSuggestions["apiSuggestions"] as Array<String>
+        GlobalScope.launch {
+            val array = chrome.storage.local.get<Array<String>>("apiSuggestions")
             val data = array.map { api ->
-                (js("{}") as SuggestResult).apply{
+                SuggestResult{
                     content = api
                     description = "Open chrome.${api} API"
                 }
@@ -49,7 +44,7 @@ fun displaySuggestions() {
         }
     }
     chrome.omnibox.onInputEntered.addListener({ input, disposition ->
-        chrome.tabs.create((js("{}") as CreateProperties).apply {
+        chrome.tabs.create(CreateProperties {
             url = URL_CHROME_EXTENSIONS_DOC + input
         }, {})
         // 保存关键词
@@ -57,23 +52,21 @@ fun displaySuggestions() {
     })
 }
 
-fun updateHistory(input: String) {
-    chrome.storage.local.get("apiSuggestions"){ apiSuggestions ->
-        val array = apiSuggestions["apiSuggestions"] as Array<String>
+fun updateHistory(input: String) = GlobalScope.launch{
+    val array = chrome.storage.local.get<Array<String>>("apiSuggestions")
         val newArray = array.toMutableList().apply {
             add(0, input)
         }.slice(0..< NUMBER_OF_PREVIOUS_SEARCHES).toTypedArray()
-        val data = "apiSuggestions" to newArray
-        chrome.storage.local.set(kotlin.js.json(data), {})
-    }
+        chrome.storage.local.set("apiSuggestions", newArray)
 }
 
 fun setBadgeInfo() {
     chrome.runtime.onInstalled.addListener<InstalledDetails> {
         // 将默认建议保存到存储空间
         if (it.reason == "install"){
-            val data = Pair("apiSuggestions", arrayOf("tabs", "storage", "scripting"))
-            chrome.storage.local.set(kotlin.js.json(data), {})
+            GlobalScope.launch {
+                chrome.storage.local.set("apiSuggestions", arrayOf("tabs", "storage", "scripting"))
+            }
         }
         val textDetails = BadgeTextDetails  {
             text = "OFF"
@@ -86,7 +79,7 @@ fun setBadgeInfo() {
         if (tab.url?.startsWith(extensions) == true ||
             tab.url?.startsWith(webstore) == true){
             // 更改标签
-            chrome.action.getBadgeText((js("{}") as TabDetails).apply {
+            chrome.action.getBadgeText(TabDetails {
                 tabId = tab.id
             }).then {
                 if( it == "ON") "OFF" else "ON"
@@ -100,15 +93,15 @@ fun setBadgeInfo() {
                 // 添加或移除样式表
                 when (it) {
                     "ON" -> {
-                        chrome.scripting.insertCSS((js("{}") as CSSInjection).apply {
+                        chrome.scripting.insertCSS(CSSInjection {
                             files = arrayOf("focus-mode.css")
-                            target = (js("{}") as InjectionTarget).apply { tabId = tab.id }
+                            target = InjectionTarget { tabId = tab.id }
                         }, {})
                     }
                     "OFF" -> {
-                        chrome.scripting.removeCSS((js("{}") as CSSInjection).apply {
+                        chrome.scripting.removeCSS(CSSInjection {
                             files = arrayOf("focus-mode.css")
-                            target = (js("{}") as InjectionTarget).apply { tabId = tab.id }
+                            target = InjectionTarget { tabId = tab.id }
                         }, {})
                     }
                     else -> {

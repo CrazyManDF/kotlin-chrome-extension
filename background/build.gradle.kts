@@ -8,6 +8,7 @@ dependencies {
 //    implementation(project(":chrome"))
     implementation(project(":data"))
     implementation(Deps.Kotlin.serialization)
+    implementation(Deps.Kotlin.Coroutines.core_js)
 }
 
 kotlin {

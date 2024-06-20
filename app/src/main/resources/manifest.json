@@ -38,6 +38,8 @@
     "storage"
   ],
 
+  "host_permissions": ["https://extension-tips.glitch.me/*"],
+
   "minimum_chrome_version": "102",
   "omnibox": {
     "keyword": "api"
