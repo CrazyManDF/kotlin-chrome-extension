@@ -46,6 +46,16 @@ external interface ZoomSettings {
     var scope: ZoomSettingsScope?
 }
 
+external interface CreateProperties {
+    var active: Boolean?
+    var index: Number?
+    var openerTabId: Number?
+    var pinned: Boolean?
+    var selected: Boolean?
+    var url: String?
+    var windowId: Number?
+}
+
 external fun captureVisibleTab(windowId: JsNumber?, options: ImageDetails?): Promise<String>
 external interface ConnectInfoObject {
     var documentId: String?
@@ -54,3 +64,4 @@ external interface ConnectInfoObject {
 }
 
 external fun connect(tabId: JsNumber, connectInfo: ConnectInfoObject?): Port
+external fun create(createProperties: CreateProperties, callback: (Tab) -> Unit): Promise<Tab>
