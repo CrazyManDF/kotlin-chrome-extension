@@ -52,5 +52,5 @@ external fun sendMessage(message: Any, options: MessageOptions, responseCallback
 external fun sendMessage(extensionId: String, message: Any, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
 external fun sendMessage(extensionId: String, message: Any, options: MessageOptions, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
 
-external var onMessage: ExtensionMessageEvent = definedExternally
+external var onMessage: ExtensionMessageEvent
 external var onInstalled: Event<InstalledDetails>

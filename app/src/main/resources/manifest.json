@@ -20,7 +20,7 @@
 
   "content_scripts": [
     {
-      "matches": ["*://*/*"],
+      "matches": ["*://*/*", "https://developer.chrome.com/docs/extensions/reference/*"],
       "js": [
         "content.js"
       ]
@@ -35,7 +35,8 @@
     "background",
     "activeTab",
     "scripting",
-    "storage"
+    "storage",
+    "alarms"
   ],
 
   "host_permissions": ["https://extension-tips.glitch.me/*"],

@@ -11,7 +11,7 @@ import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.Element
-import org.w3c.dom.HTMLHeadingElement
+import org.w3c.dom.parsing.DOMParser
 import kotlin.math.round
 
 
@@ -21,6 +21,8 @@ fun main() {
 
     countReadingTime()
     createSendMessage()
+
+    tipWidget()
 }
 
 
@@ -29,15 +31,15 @@ fun main() {
  */
 fun countReadingTime() {
     val article = document.querySelector("article")
-    if (article != null){
+    if (article != null) {
         val text = article.textContent ?: ""
 //        val  wordMatchRegExp = Regex("""[^\s]+""")
-        val  wordMatchRegExp = Regex("""[\u4e00-\u9fa5]""")
+        val wordMatchRegExp = Regex("""[\u4e00-\u9fa5]""")
         val words = wordMatchRegExp.findAll(text)
         val wordCount = words.count()
-        println("==========1===$text")
-        println("==========2===$wordCount")
-        val readingTime = round( wordCount / 200f)
+//        println("==========1===$text")
+        println("countReadingTime=$wordCount")
+        val readingTime = round(wordCount / 200f)
 
         val badge = document.createElement("p")
         badge.id = "badgeId"
@@ -86,4 +88,43 @@ private fun sendMessage(onResponse: (Message) -> Unit) {
             onResponse(responseMessage)
         }
     )
+}
+
+/**
+ * 显示计时器获取数据
+ */
+fun tipWidget() {
+
+    chrome.runtime.sendMessage(
+        message = "tip",
+        responseCallback = { tip ->
+
+            // 此处无法返回数据，不知道什么原因
+            println("收到：$tip")
+
+            val nav = document.querySelector(".upper-tabs > nav")
+
+            val tipWidget = createDomElement(
+                """
+            <button type="button" popovertarget="tip-popover" popovertargetaction="show" style="padding: 0 12px; height: 36px;">
+            <span style="display: block; font: var(--devsite-link-font,500 14px/20px var(--devsite-primary-font-family));">Tip</span>
+            </button>
+            """.trimIndent()
+            )
+
+            val popover = createDomElement(
+                """
+                <div id='tip-popover' popover style="margin: auto;">${tip}-afjeiae</div>
+            """.trimIndent()
+            )
+
+            document.body?.append(popover)
+            nav?.append(tipWidget)
+        }
+    )
+}
+
+fun createDomElement(html: String): Element? {
+    val dom = DOMParser().parseFromString(html, "text/html")
+    return dom.body?.firstElementChild
 }

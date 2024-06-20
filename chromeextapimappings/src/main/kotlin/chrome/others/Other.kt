@@ -1,6 +1,7 @@
 package chrome.others
 
 import chrome.action.BadgeTextDetails
+import chrome.alarms.AlarmCreateInfo
 import chrome.browserAction.TabDetails
 import chrome.omnibox.DefaultSuggestResult
 import chrome.omnibox.SuggestResult
@@ -35,3 +36,6 @@ fun CSSInjection(block: CSSInjection.() -> Unit): CSSInjection =
 
 fun InjectionTarget(block: InjectionTarget.() -> Unit): InjectionTarget =
     (js("{}") as InjectionTarget).apply(block)
+
+fun AlarmCreateInfo(block: AlarmCreateInfo.() -> Unit): AlarmCreateInfo =
+    (js("{}") as AlarmCreateInfo).apply(block)
