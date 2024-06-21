@@ -82,7 +82,9 @@ fun createSendMessage() {
 private fun sendMessage(onResponse: (Message) -> Unit) {
     val message = Message(action = "CONTENT_SCRIPT_CLICK", message = "Message from content script")
     chrome.runtime.sendMessage(
+        extensionId = null,
         message = Json.encodeToString(message),
+        options = null,
         responseCallback = { response ->
             val responseMessage = Json.decodeFromString<Message>(response.toString())
             onResponse(responseMessage)
@@ -94,9 +96,10 @@ private fun sendMessage(onResponse: (Message) -> Unit) {
  * 显示计时器获取数据
  */
 fun tipWidget() {
-
     chrome.runtime.sendMessage(
+        extensionId = null,
         message = "tip",
+        options = null,
         responseCallback = { tip ->
 
             // 此处无法返回数据，不知道什么原因
@@ -114,7 +117,7 @@ fun tipWidget() {
 
             val popover = createDomElement(
                 """
-                <div id='tip-popover' popover style="margin: auto;">${tip}-afjeiae</div>
+                <div id='tip-popover' popover style="margin: auto;">${tip}</div>
             """.trimIndent()
             )
 

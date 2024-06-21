@@ -9,7 +9,6 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -140,7 +139,7 @@ fun sendResponseMessage() {
     chrome.runtime.onMessage.addListener { request, sender, sendResponse ->
         println("Background receives a message: $request")
         if (request == ALARM_NAME) {
-           MainScope().launch {
+           GlobalScope.launch {
                 val data = chrome.storage.local.get<String>(ALARM_NAME)
                 println("返回: $data")
                 sendResponse(data)
@@ -158,6 +157,7 @@ fun sendResponseMessage() {
             }
             sendResponse(Json.encodeToString(response))
         }
+        return@addListener true
     }
 }
 
@@ -187,28 +187,3 @@ fun updateTip() {
         chrome.storage.local.set(ALARM_NAME, tips[randomIndex])
     }
 }
-
-
-// https://extension-tips.glitch.me/tips.json
-const val JSON_DATA = """
-    [
-  "<p>All extensions must have a <a href=\"https://developer.chrome.com/docs/extensions/mv3/single_purpose/#three\">single purpose</a>.</p>",
-  "<p>Develop your extension using <a href=\"https://www.google.com/chrome/beta/\">Chrome Beta</a> to test the latest upcoming platform features.</p>",
-  "<p>Follow the latest news about Chrome extensions in <a href=\"https://developer.chrome.com/docs/extensions/whatsnew/\">What's new?</a></p>",
-  "<p>Provide meaningful <a href=\"https://developer.chrome.com/docs/webstore/manage/#provide-user-support\">customer support</a> for your extension.</p>",
-  "<p>Localize your extension with the <a href=\"https://developer.chrome.com/docs/extensions/reference/i18n/\">i18n API.</a></p>",
-  "<p>Ensure your <a href=\"https://developer.chrome.com/docs/webstore/best_listing/\">store listing</a> is easy to use and understand for users and up-to-date.</p>",
-  "<p>Minimize your <a href=\"https://developer.chrome.com/docs/extensions/mv3/declare_permissions/\">permissions</a> to only what is necessary to support your main feature.</p>",
-  "<p>Test your extension thoroughly before submitting an update to the store.</p>",
-  "<p>Remember that adding a new permission that  <a href=\"https://developer.chrome.com/docs/extensions/mv3/permission_warnings/#permissions_with_warnings\">triggers a warning</a> will disable your extension.</p>",
-  "<p>Use<a href=\"https://developer.chrome.com/docs/extensions/reference/permissions/\"> optional permissions</a> to allow the user to enable additional extension features.</p>",
-  "<p>Interact with the Chrome developer community to get feedback in the <a href=\"https://groups.google.com/a/chromium.org/g/chromium-extensions\">Chromium Google group</a>.</p>",
-  "<p>Make sure your extension has a clear and concise user interface that is easy to understand.</p>",
-  "<p>Add a <a href=\"https://developer.chrome.com/docs/webstore/cws-dashboard-listing/#graphic-assets\">YouTube video</a> to your extension store listing that explains how to use your extension.</p>",
-  "<p>Learn about the<a href=\"https://developer.chrome.com/docs/webstore/review-process/#review-time-factors\"> notable factors that increase Chrome Web Store review times.</a></p>",
-  "<p>Bundle all third-party libraries and frameworks in the extension package. Remote code is not supported</p>",
-  "<p>Create an onboarding experience by opening a new page when the extension is first installed using runtime.onInstalled()</p>",
-  "<p>Consider user privacy and security when designing your extension.</p>",
-  "<p>Provide users with the ability to customize the behavior and appearance of your extension.</p>"
-]
-"""

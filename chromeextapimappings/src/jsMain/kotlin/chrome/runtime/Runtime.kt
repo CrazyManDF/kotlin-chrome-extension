@@ -7,6 +7,7 @@ import chrome.others.Callback
 import chrome.others.JsNumber
 import chrome.others.MessageCallback
 import chrome.tabs.Tab
+import kotlin.js.Promise
 
 external interface Port{
     var name: String
@@ -41,16 +42,17 @@ external interface InstalledDetails {
 }
 
 external interface MessageOptions {
-    var includeTlsChannelId: Boolean? get() = definedExternally; set(value) = definedExternally
+    var includeTlsChannelId: Boolean?
 }
 
 
-external interface ExtensionMessageEvent : chrome.events.Event2<(message: Any, sender: MessageSender, sendResponse: (response: Any) -> Unit) -> Unit>
+external interface ExtensionMessageEvent : chrome.events.Event2<(message: Any, sender: MessageSender, sendResponse: (response: Any) -> Unit) -> Boolean>
 
-external fun sendMessage(message: Any, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
-external fun sendMessage(message: Any, options: MessageOptions, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
-external fun sendMessage(extensionId: String, message: Any, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
-external fun sendMessage(extensionId: String, message: Any, options: MessageOptions, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
+//external fun sendMessage(message: Any, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
+//external fun sendMessage(message: Any, options: MessageOptions, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
+//external fun sendMessage(extensionId: String, message: Any, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
+//external fun sendMessage(extensionId: String, message: Any, options: MessageOptions, responseCallback: ((response: Any) -> Unit)? = definedExternally /* null */): Unit = definedExternally
 
+external fun sendMessage(extensionId: String?, message: Any, options: MessageOptions?, responseCallback: ((response: Any) -> Unit)?): Promise<Any>
 external var onMessage: ExtensionMessageEvent
 external var onInstalled: Event<InstalledDetails>

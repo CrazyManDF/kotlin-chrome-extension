@@ -22,7 +22,7 @@ import kotlin.js.Json
 
 external interface StorageArea {
     @JsName("get")
-    fun getAsync(vararg key: String, callback: (Json) -> Unit)
+    fun getAsync(vararg keys: String, callback: (items: Json) -> Unit)
     @JsName("set")
     fun setAsync(items: Json, callback: () -> Unit)
 }
