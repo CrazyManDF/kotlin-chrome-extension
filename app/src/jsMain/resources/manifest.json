@@ -1,15 +1,13 @@
 {
   "manifest_version": 3,
-
   "name": "Kotlin Extension",
   "description": "",
   "version": "0.1.0",
-
   "action": {
     "default_title": "Click to show an alert",
-    "default_icon": "icon.png"
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
   },
-
   "icons": {
     "16": "icon16.png",
     "32": "icon32.png",
@@ -17,20 +15,20 @@
     "64": "icon64.png",
     "128": "icon.png"
   },
-
   "content_scripts": [
     {
-      "matches": ["*://*/*", "https://developer.chrome.com/docs/extensions/reference/*"],
+      "matches": [
+        "*://*/*",
+        "https://developer.chrome.com/docs/extensions/reference/*"
+      ],
       "js": [
         "content.js"
       ]
     }
   ],
-
   "background": {
     "service_worker": "background.js"
   },
-
   "permissions": [
     "background",
     "activeTab",
@@ -38,9 +36,10 @@
     "storage",
     "alarms"
   ],
-
-  "host_permissions": ["https://extension-tips.glitch.me/*"],
-
+  "host_permissions": [
+    "https://extension-tips.glitch.me/*",
+    "https://developer.chrome.com/*"
+  ],
   "minimum_chrome_version": "102",
   "omnibox": {
     "keyword": "api"

@@ -1,6 +1,8 @@
 package chrome.others
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
 import kotlin.coroutines.*

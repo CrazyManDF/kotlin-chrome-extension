@@ -3,11 +3,11 @@
 package chrome.action
 
 import chrome.browserAction.ColorArray
-import chrome.others.dualvalues.ImageDataValue
 import chrome.browserAction.TabDetails
 import chrome.events.Event
 import chrome.others.JsNumber
 import chrome.others.dualvalues.ColorValue
+import chrome.others.dualvalues.ImageDataValue
 import chrome.others.dualvalues.PathValue
 import chrome.tabs.Tab
 import kotlin.js.Promise

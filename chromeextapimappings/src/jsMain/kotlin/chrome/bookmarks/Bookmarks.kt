@@ -2,9 +2,7 @@
 
 package chrome.bookmarks
 
-import chrome.alarms.Alarm
 import chrome.events.Event
-import chrome.others.Callback
 import chrome.others.JsNumber
 import chrome.others.dualvalues.SearchStringOrObject
 import chrome.others.dualvalues.SingleOrList

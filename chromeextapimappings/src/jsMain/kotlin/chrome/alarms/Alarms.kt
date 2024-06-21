@@ -4,7 +4,6 @@ package chrome.alarms
 
 import chrome.events.Event
 import chrome.others.JsNumber
-import chrome.tabs.Tab
 import kotlin.js.Promise
 
 external interface Alarm {

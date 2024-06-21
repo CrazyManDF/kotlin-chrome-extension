@@ -1,18 +1,26 @@
-import androidx.compose.runtime.NoLiveLiterals
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import com.example.template.data.Message
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.jetbrains.compose.web.renderComposable
-import com.example.template.data.Message
 import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.renderComposable
 
 fun main() {
     renderComposable("root") {
         var result by remember { mutableStateOf("") }
+
+        Li {
+            A {
+                H3 { Text("Tab Title") }
+                P { Text("Tab Pathname") }
+            }
+        }
+        H1 { Text("Google Dev Docs") }
+        Button {
+            Text("Group Tabs")
+        }
+        Ul {  }
         H3 {
             Text("Hello Extensions")
         }
@@ -29,6 +37,7 @@ fun main() {
         Text(result)
     }
 }
+
 
 @NoLiveLiterals
 private fun sendMessage(onResponse: (Message) -> Unit) {
