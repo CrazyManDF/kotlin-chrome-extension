@@ -2,7 +2,6 @@
 package chrome.omnibox
 
 import chrome.events.Event2
-import chrome.others.OnInputEnteredDisposition
 import chrome.others.VoidCallback
 
 external interface SuggestResult {

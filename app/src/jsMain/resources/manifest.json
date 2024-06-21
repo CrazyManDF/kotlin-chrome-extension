@@ -34,7 +34,8 @@
     "activeTab",
     "scripting",
     "storage",
-    "alarms"
+    "alarms",
+    "tabGroups"
   ],
   "host_permissions": [
     "https://extension-tips.glitch.me/*",
