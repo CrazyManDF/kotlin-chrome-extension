@@ -5,7 +5,12 @@ import chrome.others.UpdateInfo
 import chrome.others.UpdateProperties
 import chrome.tabs.Tab
 import com.example.template.data.Message
+import dev.shreyaspatil.ai.client.generativeai.Chat
+import dev.shreyaspatil.ai.client.generativeai.GenerativeModel
+import dev.shreyaspatil.ai.client.generativeai.type.content
 import kotlinx.browser.document
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -15,27 +20,84 @@ import org.w3c.dom.Element
 import org.w3c.dom.events.EventListener
 import org.w3c.dom.url.URL
 
+
 fun main() {
-    groupTabsView()
+
+    val generativeModel = GenerativeModel(
+        modelName = "gemini-1.5-pro",
+        apiKey = "AIzaSyBFzoI12kpLELfwajucg9QiYdiRDRIktRg"
+    )
+
+    val chat = generativeModel.startChat(
+        listOf(content(role = "user") { text("请将以下文本翻译成中文。") })
+    )
+
+    groupTabsView(chat)
+}
+
+@Composable
+fun setGemini(chat: Chat) {
+// https://github.com/PatilShreyas/generative-ai-kmp?tab=readme-ov-file
+    var textInputState by remember { mutableStateOf("请将以下文本翻译成中文") }
+    var textResultState by remember { mutableStateOf("") }
+    val messageList = remember { mutableStateListOf<String>() }
+
+//    GlobalScope.launch {
+//        val data = chrome.storage.local.get<String>("gemini_text")
+//        textInputState = data
+//    }
+
+    TextArea {
+        value(textInputState)
+        onInput { input ->
+            textInputState = input.value
+        }
+    }
+
+    Button({
+        onClick {
+            messageList.add(textInputState)
+            GlobalScope.launch {
+                val msg = content(role = "user"){ text(textInputState)}
+                textInputState = ""
+                chat.sendMessageStream(msg).collect { chunk ->
+                    println("AI 结果：${chunk.text}")
+                    textResultState = chunk.text ?: ""
+                    messageList.add(textResultState)
+                }
+//                chrome.storage.local.set("gemini_text", textInputState)
+            }
+        }
+    }) {
+        Text("发送")
+    }
+
+    for (msg in messageList) {
+        H4 {
+            Text(value = msg)
+        }
+    }
 }
 
 /**
  * tab分组布局
  */
-fun groupTabsView() {
+fun groupTabsView(chat: Chat) {
 
     renderComposable("root") {
 
-        sendMessageView()
+        setGemini(chat)
+
+//        sendMessageView()
 
         H1 { Text("Google Dev Docs") }
         Button({
             id("group_tabs")
             onClick {
-                queryTabs{ tabs ->
+                queryTabs { tabs ->
                     // 分组
-                    chrome.tabs.group(Options { tabIds = tabs.map { it.id!! }.toTypedArray()}) { group ->
-                        chrome.tabGroups.update(group, chrome.tabGroups.UpdateProperties{ title = "DOCS" }, {})
+                    chrome.tabs.group(Options { tabIds = tabs.map { it.id!! }.toTypedArray() }) { group ->
+                        chrome.tabGroups.update(group, chrome.tabGroups.UpdateProperties { title = "DOCS" }, {})
                     }
                 }
             }
@@ -43,6 +105,7 @@ fun groupTabsView() {
             Text("Group Tabs")
         }
         Ul { }
+
 
     }
 
@@ -63,6 +126,25 @@ fun groupTabsView() {
     }
 
     fillTabsData()
+
+//    document.body!!.append.div {
+//        h1 {
+//            + "Welcome to Kotlin/JS!"
+//        }
+//        p {
+//            +"Fancy joining this year's "
+//            a("https://kotlinconf.com/") {
+//                +"KotlinConf"
+//            }
+//            +"?"
+//        }
+//        textArea(
+//            rows = "5",
+//            cols = "30"
+//        ) {
+//            + "Fancy joining this year's Fancy joining this year'sFancy joining this year'sFancy joining this year'sFancy joining this year's"
+//        }
+//    }
 }
 
 private fun queryTabs(callback: (Array<Tab>) -> Unit) {
@@ -78,7 +160,7 @@ private fun queryTabs(callback: (Array<Tab>) -> Unit) {
 
 private fun fillTabsData() {
     queryTabs { tabs ->
-        tabs.sortWith(compareBy({it.title}))
+        tabs.sortWith(compareBy({ it.title }))
         // 标签数据
         val template = document.getElementById("li_template")
         val elements = hashSetOf<Element>()
